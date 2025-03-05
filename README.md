@@ -91,24 +91,28 @@ A higher score indicates a preferred alternative. The tool provides:
 
 ## 🚀 Getting Started
 
-Prerequisites
+### Prerequisites
 
 	•	Python 3.8 or higher
 	•	Required libraries: streamlit, pandas, numpy, matplotlib, seaborn
 
-Installation_ 
+### Installation
 
-	1.	Clone this repository:
-git clone https://github.com/christianriccio/ahp-express-dlm.git
-cd ahp-express-dlm
+	1.	Clone this repository via ```console git clone ``` and move inside the cloned directory 
+
 
 	2.	Install dependencies:
-pip install -r requirements.txt
+ 
+ 		```console
+		pip install -r requirements.txt
+  		```
 
 	3.	Run the application:
-streamlit run app.py
+ ```console
+	streamlit run ahp3.py
+```
 
-
+ore you can use the tool as a streamlit web application at the following link. 
 Usage
 
 	1.	Upload an Excel or CSV file with DLMs and sub-factor scores (first column = DLM name, subsequent columns = sub-factors).
