@@ -77,11 +77,44 @@ The code is structured as an interactive **Streamlit application**.
 
 Each DLM alternative is assigned a final score based on:
 
-- Factor weights,
-- Sub- factor weights,
-- Alternative performance on sub-factors.
-- An higher score typically indicates a preferred alternative.
+	•	Factor weights: Macro-category weights (0.5 default for both cat. A and for cat. B).
+	•	Sub-factor weights: Priorities derived from AHP-Express comparisons.
+	•	Alternative performance on sub-factors: DLM scores for each sub-factor in the input file.
 
+A higher score indicates a preferred alternative. The tool provides:
+
+	•	Bar Chart: Displays final DLM scores for ranking.
+	•	Radar Chart: Compares DLMs across sub-factors, normalized for clarity.
+	•	Sensitivity Analysis: Shows how scores vary with macro-category weights, assessing robustness.
+
+
+
+## 🚀 Getting Started
+
+Prerequisites
+
+	•	Python 3.8 or higher
+	•	Required libraries: streamlit, pandas, numpy, matplotlib, seaborn
+
+Installation_ 
+
+	1.	Clone this repository:
+git clone https://github.com/christianriccio/ahp-express-dlm.git
+cd ahp-express-dlm
+
+	2.	Install dependencies:
+pip install -r requirements.txt
+
+	3.	Run the application:
+streamlit run app.py
+
+
+Usage
+
+	1.	Upload an Excel or CSV file with DLMs and sub-factor scores (first column = DLM name, subsequent columns = sub-factors).
+	2.	Configure macro-category weights and the number of interviews.
+	3.	Perform AHP-Express comparisons for each category and interview.
+	4.	Review the final rankings, visualizations, and sensitivity analysis.
 
 
 
