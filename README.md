@@ -24,12 +24,21 @@ The **AHP-Express** method reduces these comparisons to **n-1**, by:
    - If *R* is 2x more important than *i*, then $r_{i} = 1/2$
 3. Assigning an unnormalized weight $w_{R} = 1$ to the reference,
 4. Computing unnormalized weights as $w_{i} = r_{i}$,
-5. Normalizing all weights so that their sum is 1.
+5. Normalizing all weights so that their sum is 1:
+   $w_{i}^{'} = \frac{w_{i}}{\sum_{k}w_{k}}$
 
 This leads to fewer comparisons, eliminating the need for **consistency ratio checks**, as inconsistency mainly arises from comparing **low-priority** alternatives.
 
 ### 1.3 Multi-Interview Aggregation
-AHP-Express can integrate multiple expert opinions using the **geometric mean**, as recommended by Saaty. This ensures robustness by capturing diverse perspectives in a single priority model.
+AHP-Express can integrate multiple expert opinions using the geometric mean, as recommended by Saaty (1987). For ( n ) experts providing values ( v_1, v_2, …, v_n ), the geometric mean is:
+
+$\text{Geometric Mean} = \left( \prod_{i=1}^{n} v_i \right)^{1/n}$
+
+When weights are provided for experts, a weighted geometric mean is used:
+
+$\text{Weighted Geometric Mean} = \left( \prod_{i=1}^n v_{i}^{w_i} \right)^{1 / \sum w_{i}}$
+
+This ensures robustness by capturing diverse perspectives in a single priority model.
 
 ---
 
@@ -76,11 +85,12 @@ Each DLM alternative is assigned a final score based on:
 
 
 
-### Acknowledgments
+### 📝 Acknowledgments
 > [!NOTE]
-> Feel free to use (or modify) the code as long as you mention the repository and who implemented it, for further details contact at the following email christian.riccio@unicampania.it
+> Feel free to use or modify the code as long as you mention this repository and its contributors. For further details, contact the primary author at christian.riccio@unicampania.it.
 
 ## References 
+This implementation builds on the theorethical foundations of:
 
 [^1]: LEAL, José Eugenio. AHP-express: A simplified version of the analytical hierarchy process method. MethodsX, 2020, 7: 100748.
 [^2]: SAATY, Roseanna W. The analytic hierarchy process—what it is and how it is used. Mathematical modelling, 1987, 9.3-5: 161-176.
