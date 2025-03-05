@@ -46,16 +46,93 @@ This ensures robustness by capturing diverse perspectives in a single priority m
 The code is structured as an interactive **Streamlit application**.
 
 ### 2.1 Structure of the Code
-+ **Functions:**
-  - `normalize_vector()`: Normalizes weights so they sum to 1.
-  - `calculate_ahp_express_prior()`: Computes AHP-Express priority scores.
-  - `media_geometrica_custom()`: Computes geometric mean for multi-interview aggregation.
-  - `create_bar_chart()`, `create_radar_chart()`: Generate visualizations (bar charts, radar charts).
-  - `sensitivity_anal()`: Conducts a sensitivity analysis of results.
+The application is divided into:
+- **Main Function (main())**: Orchestrates the Streamlit interface, guiding users through data input, configuration, comparisons, and result visualization.
+- **Helper Functions**: Perform specific tasks like data loading, priority calculations, and visualizations.
 
-+ **Main App Flow:**
+### Functions
+1. `normalize_vector(v)`: Normalizes a vector so its elements sum to 1, ensuring AHP priorities are consistent.
+```python
+def normalize_vector(v):
+    """function to normalize a vector (sum to 1)"""
+    s = sum(v)
+    if s == 0:
+        return [0] * len(v)
+    return [x / s for x in v]
+```
+
++ **Usage**: Applied after computing unnormalized priorities to ensure they sum to 1.
+  
+2. `calculate_ahp_express_prior(base_index, values)`: Computes AHP-Express priority scores by comparing all elements against a reference (base) item.
+```python
+def calculate_ahp_express_prior(base_index, values):
+    """
+    This function is responsible for calculating the priority vector according AHP-express
+    Formula: pr_j = (1/a(base,j)) / Σ_k (1/a(base,k))
+    """
+    reciprocals = [1.0 / v for v in values]
+    denom = sum(reciprocals)
+    priorities = [(1.0 / v) / denom for v in values]
+    return priorities
+```
+
++ **Usage**: Takes comparison values (e.g., Saaty’s scale: 1, 3, 9) and returns normalized priorities.
+
+3. `media_geometrica_custom(valori, pesi=None)`: Computes the geometric mean for multi-interview aggregation, optionally weighted.
+```python
+def media_geometrica_custom(valori, pesi=None):
+    """
+    This function calculates the geometric mean:
+      - if no weights are provided, use standard geometric mean
+      - if weights are provided, use weighted geometric mean
+    """
+    valori_filtrati = [v for v in valori if v > 0]
+    if len(valori_filtrati) == 0:
+        return 1.0
+    if pesi is None:
+        prodotto = 1.0
+        for v in valori:
+            if v > 0:
+                prodotto *= v
+        return prodotto ** (1.0 / len(valori_filtrati))
+    else:
+        if len(pesi) != len(valori):
+            st.error("Weights lengths does not match values.")
+            return 1.0
+        tot = sum(pesi)
+        norm_pesi = [w / tot if tot > 0 else 1.0 / len(pesi) for w in pesi]
+        prodotto = 1.0
+        for v, w in zip(valori, norm_pesi):
+            if v > 0:
+                prodotto *= v ** w
+        return prodotto
+```
+
++ **Usage**: Aggregates comparison values from multiple interviews, ensuring robust prioritization.
+
+4. `create_bar_chart(labels, values, title="Bar Chart")` and `create_radar_chart(df, title="Radar Chart")`: Generate visualizations for DLM scores and sub-factor comparisons.
+
+5. `sensitivity_anal(df_dlm, sottofattori, priA_norm, priB_norm)`: Conducts a sensitivity analysis by varying macro-category weights.
+```python
+def sensitivity_anal(df_dlm, sottofattori, priA_norm, priB_norm):
+    """
+    This function is responsible for calculating the sensitivity analysis by varying the weight of cat. A from 0 to 1.
+    """
+    st.header("Sensitivity Analysis")
+    pA_values = np.linspace(0, 1, 21)
+    sensitivity_scores = {dlm: [] for dlm in df_dlm[df_dlm.columns[0]].tolist()}
+    for pA in pA_values:
+        pB = 1 - pA
+        combined = [priA_norm[i] * pA + priB_norm[i] * pB for i in range(len(sottofattori))]
+        combined_norm = normalize_vector(combined)
+        for index, row in df_dlm.iterrows():
+            score = sum(float(row[sf]) * combined_norm[i] for i, sf in enumerate(sottofattori))
+            dlm_name = row[df_dlm.columns[0]]
+            sensitivity_scores[dlm_name].append(score)
+```
+ ### Main App Flow:
   1. **Step 1**: Load an **Excel/CSV** file containing **DLMs** and evaluation factors.
-  2. **Step 2**: Configure **macro-categories** (e.g., *A = High Data Volume*, *B = Low Data Volume*).
+  2. **Step 2**: Configure **macro-categories** (e.g., *A = New and Big Data*, *B = Old data*).
   3. **Step 3**: Conduct **pairwise comparisons** for subfactors using **AHP-Express**.
   4. **Step 4**: Aggregate multi-expert evaluations using **geometric mean**.
   5. **Step 5**: Compute final scores by **weighting alternatives across all factors**.
@@ -64,28 +141,32 @@ The code is structured as an interactive **Streamlit application**.
 ### 2.2 Key Functions and Code Snippets
 
 #### Pairwise Comparison Implementation
-```python
+Pairwise Comparison Implementation
 
-```
+The AHP-Express method is implemented in `calculate_ahp_express_prior()`, reducing comparisons to ( n-1 ). For example, with sub-factors [S1, S2, S3] and S1 as the reference, users provide comparisons like S1 vs. S2 = 3 and S1 vs. S3 = 9, which are processed to derive priorities.
 
 #### Final Score Computation
+Final DLM scores are computed in `main()` by multiplying DLM sub-factor values by the combined priority vector:
+
 ```python
-
+data_scores = []
+for _, row in df_dlm.iterrows():
+    score = sum(float(row[sf]) * final_subfactors[i] for i, sf in enumerate(sottofattori))
+    data_scores.append(score)
+df_dlm['Final_score'] = data_scores
 ```
-
+This weighted sum ensures each DLM performance is evaluated against all sub-factors, weighted by their final priorities.
 ## 📊 3. Results Interpretation
 
 Each DLM alternative is assigned a final score based on:
-
-	•	Factor weights: Macro-category weights (0.5 default for both cat. A and for cat. B).
-	•	Sub-factor weights: Priorities derived from AHP-Express comparisons.
-	•	Alternative performance on sub-factors: DLM scores for each sub-factor in the input file.
+- **Factor weight**s: Macro-category weights (0.5 default for both cat. A and for cat. B).
+- **Sub-factor weights**: Priorities derived from AHP-Express comparisons.
+- **Alternative performance on sub-factors**: DLM scores for each sub-factor in the input file.
 
 A higher score indicates a preferred alternative. The tool provides:
-
-	•	Bar Chart: Displays final DLM scores for ranking.
-	•	Radar Chart: Compares DLMs across sub-factors, normalized for clarity.
-	•	Sensitivity Analysis: Shows how scores vary with macro-category weights, assessing robustness.
+- **Bar Chart**: Displays final DLM scores for ranking.
+- **Radar Chart**: Compares DLMs across sub-factors, normalized for clarity.
+- **Sensitivity Analysis**: Shows how scores vary with macro-category weights, assessing robustness.
 
 
 
@@ -93,34 +174,33 @@ A higher score indicates a preferred alternative. The tool provides:
 
 ### Prerequisites
 
-	•	Python 3.8 or higher
-	•	Required libraries: streamlit, pandas, numpy, matplotlib, seaborn
+- Python 3.8 or higher
+- Required libraries: streamlit, pandas, numpy, matplotlib, seaborn
 
 ### Installation
+1. **Clone this repository via:**
+    ```console
+    git clone
+    ```
+    and move inside the cloned directory 
 
-	1.	Clone this repository via ```console git clone ``` and move inside the cloned directory 
-
-
-	2.	Install dependencies:
+2. **Install dependencies:**
  
- 		```console
-		pip install -r requirements.txt
-  		```
-
-	3.	Run the application:
- ```console
-	streamlit run ahp3.py
+```console
+pip install -r requirements.txt
 ```
 
-ore you can use the tool as a streamlit web application at the following link. 
-Usage
+3. **Run the application:**
+ ```console
+streamlit run ahp3.py
+```
+ore you can use the tool as a streamlit web application at the following [link]([https://ahp-risk.streamlit.app/](https://ahp-express-dlm.streamlit.app/). 
 
-	1.	Upload an Excel or CSV file with DLMs and sub-factor scores (first column = DLM name, subsequent columns = sub-factors).
-	2.	Configure macro-category weights and the number of interviews.
-	3.	Perform AHP-Express comparisons for each category and interview.
-	4.	Review the final rankings, visualizations, and sensitivity analysis.
-
-
+### Usage
+1. Upload an Excel or CSV file with DLMs and sub-factor scores (first column = DLM name, subsequent columns = sub-factors).
+2. Configure macro-category weights and the number of interviews.
+3. Perform AHP-Express comparisons for each category and interview.
+4. Review the final rankings, visualizations, and sensitivity analysis.
 
 ### 📝 Acknowledgments
 > [!NOTE]
