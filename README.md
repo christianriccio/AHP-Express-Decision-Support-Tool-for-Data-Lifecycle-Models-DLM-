@@ -138,10 +138,9 @@ def sensitivity_anal(df_dlm, sottofattori, priA_norm, priB_norm):
   5. **Step 5**: Compute final scores by **weighting alternatives across all factors**.
   6. **Step 6**: Visualize the results via **bar charts, radar plots**, and **sensitivity analysis**.
 
-### 2.2 Key Functions and Code Snippets
+
 
 #### Pairwise Comparison Implementation
-Pairwise Comparison Implementation
 
 The AHP-Express method is implemented in `calculate_ahp_express_prior()`, reducing comparisons to ( n-1 ). For example, with sub-factors [S1, S2, S3] and S1 as the reference, users provide comparisons like S1 vs. S2 = 3 and S1 vs. S3 = 9, which are processed to derive priorities.
 
