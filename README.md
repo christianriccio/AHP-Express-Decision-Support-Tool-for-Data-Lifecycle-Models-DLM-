@@ -194,7 +194,7 @@ pip install -r requirements.txt
  ```console
 streamlit run ahp3.py
 ```
-ore you can use the tool as a streamlit web application at the following [link]([https://ahp-risk.streamlit.app/](https://ahp-express-dlm.streamlit.app/). 
+ore you can use the tool as a streamlit web application at the following [link](https://ahp-express-dlm.streamlit.app/). 
 
 ### Usage
 1. Upload an Excel or CSV file with DLMs and sub-factor scores (first column = DLM name, subsequent columns = sub-factors).
