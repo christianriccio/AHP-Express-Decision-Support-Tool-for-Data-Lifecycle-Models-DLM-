@@ -25,7 +25,7 @@ The **AHP-Express** method reduces these comparisons to **n-1**, by:
 3. Assigning an unnormalized weight $w_{R} = 1$ to the reference,
 4. Computing unnormalized weights as $w_{i} = r_{i}$,
 5. Normalizing all weights so that their sum is 1:
-   $w_{i}^{'} = \frac{w_{i}}{\sum_{k}w_{k}}$
+   $w_{i}' = \frac{w_{i}}{\sum_{k}w_{k}}$
 
 This leads to fewer comparisons, eliminating the need for **consistency ratio checks**, as inconsistency mainly arises from comparing **low-priority** alternatives.
 
