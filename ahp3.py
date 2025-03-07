@@ -64,8 +64,7 @@ Here’s a brief overview of how it works:
 
 def carica_dlm_da_file(uploaded_file):
     """
-    This function is responsible for loading the DLM data from an excel/csv file separated by different separators
-    Carica un file Excel o CSV con possibili separatori diversi.
+    This function is responsible for loading the DLM data from an excel/csv file separated by different separators.
     """
     filename = uploaded_file.name.lower()
     if filename.endswith('.xlsx') or filename.endswith('.xls'):
