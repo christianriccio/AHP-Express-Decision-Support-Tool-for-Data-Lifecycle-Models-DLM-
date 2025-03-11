@@ -138,6 +138,26 @@ def sensitivity_anal(df_dlm, sottofattori, priA_norm, priB_norm):
   5. **Step 5**: Compute final scores by **weighting alternatives across all factors**.
   6. **Step 6**: Visualize the results via **bar charts, radar plots**, and **sensitivity analysis**.
 
+### Input Data Requirements
+To use the tool, users need to upload a dataset in **Excel (.xlsx)** or **CSV (.csv)** format containing the alternatives to be evaluated and their respective sub-factor scores. The structure of the file should follow these points:
+
+#### Required Data Format
+- **First Column:** The name or identifier of each alternative (e.g., different Data Lifecycle Models - DLMs)
+- **Subsequent Columns:** Scores for each sub-factor under evaluation
+
+#### Example Structure of Input File
+
+| ALternative Name |Factor 1       | Factor 2       |
+| ---------------- | ------------- | -------------  |
+| DLM A            | Score 1       | Score 3        |
+| DLM B            | Score 2       | Score 4        |
+
+#### Additional Considerations
+
+- Numeric values only in sub-factor columns: The tool requires numerical scores (e.g., performance metrics, evaluations, or expert-assigned weights).
+- Consistent scaling: All sub-factor values should be expressed in the same scale to ensure meaningful comparisons.
+- No missing values: Missing data may impact the calculations. Ensure all alternatives have scores for every sub-factor.
+- Customizable categories: The tool allows defining macro-categories (e.g., New Data, Old Data) to group sub-factors.
 
 
 #### Pairwise Comparison Implementation
