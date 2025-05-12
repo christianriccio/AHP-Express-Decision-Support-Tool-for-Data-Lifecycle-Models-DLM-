@@ -5,7 +5,6 @@ import math
 import matplotlib.pyplot as plt
 import io
 import csv
-import requests
 import seaborn as sns
 
 
@@ -63,8 +62,8 @@ Here’s a brief overview of how it works:
 """
 
 
-DEFAULT_DLM_CSV = """Starting;Assessment;Computation;Administration;Security;End-of-life
-USGS;8;10;5;3;0;5
++ DEFAULT_DLM_CSV = """DLM;Starting;Assessment;Computation;Administration;Security;End-of-life
++ USGS;8;10;5;3;0;5
 DataONE;4;7;10;2;0;0
 IBM;5;0;2;5;9;4
 Hindawi;5;10;8;6;7;5
@@ -271,8 +270,13 @@ def main():
             st.error("File not valid or empty")
             return
     else:
-        raw_url = "https://raw.githubusercontent.com/christianriccio/AHP-Express-Decision-Support-Tool-for-Data-Lifecycle-Models-DLM-/main/dlms.csv"
-        st.markdown(f"[Download the pre-configured file]({raw_url})", unsafe_allow_html=True)
+        st.download_button(
+            label="Download pre-configured CSV",
+            data=DEFAULT_DLM_CSV,
+            file_name="dlms.csv",
+            mime="text/csv"
+        )
+       
         df_dlm = pd.read_csv(io.StringIO(DEFAULT_DLM_CSV), sep=';')
         st.success("Use of the 10 pre-confgirued DLMs.")
 
