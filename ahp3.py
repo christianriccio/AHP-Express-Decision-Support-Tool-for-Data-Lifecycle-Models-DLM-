@@ -5,6 +5,7 @@ import math
 import matplotlib.pyplot as plt
 import io
 import csv
+import requests
 import seaborn as sns
 
 
@@ -54,12 +55,26 @@ Here’s a brief overview of how it works:
      (a *Bar Chart* and a *Radar Chart*) for better result interpretation.
 
 **Getting Started**:  
-- Upload an *Excel/CSV* file containing the DLMs and their sub-factors.  
+- Upload your *Excel/CSV* file containing the DLMs and their sub-factors or;
+- Download and then use a pre-configured CSV file at the following link:  
 - Set the number of interviews, macro-category weights, and for each interview, 
   enter the comparisons “base vs. others”.  
 - Press the button to calculate the final results.
 """
 
+
+DEFAULT_DLM_CSV = """Starting;Assessment;Computation;Administration;Security;End-of-life
+USGS;8;10;5;3;0;5
+DataONE;4;7;10;2;0;0
+IBM;5;0;2;5;9;4
+Hindawi;5;10;8;6;7;5
+DCC;7;7;8;10;6;4
+CRUD;5;7;4;7;10;8
+CIGREF;8;7;9;6;5;0
+DDI;8;7;5;3;0;6
+PII;5;4;4;6;10;4
+EDLM;4;0;6;7;2;9
+"""
 
 
 def carica_dlm_da_file(uploaded_file):
@@ -242,20 +257,27 @@ def main():
     st.markdown(testo_introduzione, unsafe_allow_html=True)
     st.title("AHP-Express Tool to compare DLMs")
 
-    scala_saaty = saaty_scale_description()
+    # --- 1. Input DLMs ---
+    st.header("1. Load DLMs file or use defaults")
+    mode = st.radio("Choose the Input", 
+                    ("Upload your own CSV/Excel", "Use default pre-configured DLMs"))
+    if mode == "Upload your own CSV/Excel":
+        uploaded_file = st.file_uploader("Upload Excel/CSV file with DLMs", type=['csv','xlsx','xls'])
+        if not uploaded_file:
+            st.info("Upload a file to proceed.")
+            return
+        df_dlm = carica_dlm_da_file(uploaded_file)
+        if df_dlm is None or df_dlm.empty:
+            st.error("File not valid or empty")
+            return
+    else:
+        raw_url = "https://raw.githubusercontent.com/christianriccio/AHP-Express-Decision-Support-Tool-for-Data-Lifecycle-Models-DLM-/main/dlms.csv"
+        st.markdown(f"[Download the pre-configured file]({raw_url})", unsafe_allow_html=True)
+        df_dlm = pd.read_csv(io.StringIO(DEFAULT_DLM_CSV), sep=';')
+        st.success("Use of the 10 pre-confgirued DLMs.")
 
-    st.header("1. Load DLMs file")
-    uploaded_file = st.file_uploader("Upload Excel/CSV file with DLMs", type=['csv', 'xlsx', 'xls'])
-
-    if not uploaded_file:
-        st.info("Load a file to proceed")
-        return
-    df_dlm = carica_dlm_da_file(uploaded_file)
-    if df_dlm is None or df_dlm.empty:
-        st.error("File not valid or empty")
-        return
     st.subheader("Data preview")
-    st.dataframe(df_dlm.head())
+    st.dataframe(df_dlm.head(10))
 
 
     dlm_names = df_dlm[df_dlm.columns[0]].tolist()
