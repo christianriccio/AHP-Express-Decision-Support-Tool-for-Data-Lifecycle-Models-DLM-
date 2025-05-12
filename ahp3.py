@@ -257,7 +257,7 @@ def main():
     st.markdown(testo_introduzione, unsafe_allow_html=True)
     st.title("AHP-Express Tool to compare DLMs")
 
-   
+    scala_saaty = saaty_scale_description()
     st.header("1. Load DLMs file or use defaults")
     mode = st.radio("Choose the Input", 
                     ("Upload your own CSV/Excel", "Use default pre-configured DLMs"))
