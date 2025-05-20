@@ -277,7 +277,7 @@ def main():
         )
        
         df_dlm = pd.read_csv(io.StringIO(DEFAULT_DLM_CSV), sep=';')
-        st.success("Use of the 10 pre-confgirued DLMs.")
+        st.success("Use of the 10 pre-configured DLMs.")
 
     st.subheader("Data preview")
     st.dataframe(df_dlm.head(10))
